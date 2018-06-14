@@ -1,10 +1,10 @@
 # immutability-helper-helper
 
-This is a wrapper around `immutability-helper` - a library that helps to produce a mutated copy of data without changing the original source.
-
-This wrapper exists because the original syntax is too messy. Mongo syntax was not a great example to begin with.
+This is a wrapper around [`immutability-helper`](https://github.com/kolodny/immutability-helper) - a library that helps to produce a mutated copy of data without changing the original source. This wrapper exists because the original syntax is too messy.
 
 ## Examples
+
+Examples below show how the same operation would be done using immutability-helper directly, and then using this wrapper.
 
 ### Simple push
 
@@ -72,7 +72,7 @@ const newCollection = op(collection, `children.${index}`).set(1);
 // => {children: ['zero', 1, 'two']}
 ```
 
-### Multiple operations
+### Batch operations
 
 ```js
 // Before:
@@ -82,10 +82,14 @@ const newData = update(myData, {
 });
 
 // After:
-const newData = op(op(myData).set("x.y.z", 7)).push("a.b", 9);
+const newData = op(myData)
+	.begin()
+	.set("x.y.z", 7)
+	.push("a.b", 9)
+	.end();
 ```
 
-A special syntax for batched operations
+For batch operations, path given to the `op` will be used as a common path prefix.
 
 ```js
 const original = {
