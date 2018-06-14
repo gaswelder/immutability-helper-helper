@@ -8,7 +8,7 @@ const cmp = (a, b) => {
 	assert.deepStrictEqual(a, b);
 };
 
-it("whatever", function() {
+it("basics", function() {
 	const state1 = ["x"];
 	const state2 = op(state1).push("y");
 	cmp(state1, ["x"]);
@@ -131,7 +131,7 @@ it("should accept object spec to modify arrays", function() {
 	cmp(modified, { value: [{ a: 1 }] });
 });
 
-it("deep update", function() {
+it("multiple updates", function() {
 	const original = {
 		a: "b",
 		c: {
@@ -145,23 +145,16 @@ it("deep update", function() {
 		}
 	};
 
-	const ops = {
-		c: {
-			d: { $set: "m" },
-			f: { $push: [5] },
-			g: { $unshift: [6] },
-			h: { $splice: [[0, 1, 7]] },
-			i: { $merge: { n: "o" } },
-			l: {
-				$apply: function(x) {
-					return x * 2;
-				}
-			},
-			m: function(x) {
-				return x + x;
-			}
-		}
-	};
+	const mod = op(original)
+		.begin()
+		.set("c.d", "m")
+		.push("c.f", 5)
+		.unshift("c.g", 6)
+		.splice("c.h", 0, 1, 7)
+		.merge("c.i", { n: "o" })
+		.apply("c.l", x => x * 2)
+		.apply("c.m", x => x + x)
+		.end();
 
 	const result = {
 		a: "b",
@@ -176,5 +169,5 @@ it("deep update", function() {
 		}
 	};
 
-	//cmp(update(original, ops), result);
+	cmp(mod, result);
 });

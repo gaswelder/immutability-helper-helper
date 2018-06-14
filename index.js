@@ -32,7 +32,56 @@ const op = (val, path = "") => ({
 	toggle: (...fields) => update(val, toggle(path, fields)),
 	unset: (...fields) => update(val, unset(path, fields)),
 	remove: (...keys) => update(val, remove(path, keys)),
-	add: (...items) => update(val, add(path, items))
+	add: (...items) => update(val, add(path, items)),
+	begin: () => new transaction(val)
 });
+
+function softMerge(obj, diff) {
+	for (const k in diff) {
+		if (!(k in obj)) {
+			obj[k] = diff[k];
+		} else {
+			softMerge(obj[k], diff[k]);
+		}
+	}
+}
+
+function transaction(original) {
+	const ops = {};
+
+	this.set = (path, val) => {
+		softMerge(ops, set(path, val));
+		return this;
+	};
+
+	this.push = (path, ...vals) => {
+		softMerge(ops, push(path, vals));
+		return this;
+	};
+
+	this.unshift = (path, ...vals) => {
+		softMerge(ops, unshift(path, vals));
+		return this;
+	};
+
+	this.splice = (path, skip, num, ...vals) => {
+		softMerge(ops, splice(path, skip, num, ...vals));
+		return this;
+	};
+
+	this.merge = (path, diff) => {
+		softMerge(ops, merge(path, diff));
+		return this;
+	};
+
+	this.apply = (path, func) => {
+		softMerge(ops, apply(path, func));
+		return this;
+	};
+
+	this.end = () => {
+		return update(original, ops);
+	};
+}
 
 module.exports = op;
