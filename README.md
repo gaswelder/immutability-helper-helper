@@ -2,6 +2,26 @@
 
 This is a wrapper around [`immutability-helper`](https://github.com/kolodny/immutability-helper) - a library that helps to produce a mutated copy of data without changing the original source. This wrapper exists because the original syntax is too messy.
 
+Installation:
+
+```
+yarn add immutability-helper-helper
+# or
+npm install immutability-helper-helper
+```
+
+Usage:
+
+```js
+const op = require("immutability-helper-helper");
+// OR
+import op from "immutability-helper-helper";
+
+// Then
+const original = { a: { b: { c: 0 } } };
+const copy = op(original).set("a.b.c", 1);
+```
+
 ## Examples
 
 Examples below show how the same operation would be done using immutability-helper directly, and then using this wrapper.

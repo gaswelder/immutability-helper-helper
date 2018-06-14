@@ -1,12 +1,15 @@
 {
-  "name": "immu",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "devDependencies": {
-    "mocha": "^5.2.0"
-  },
-  "dependencies": {
-    "immutability-helper": "^2.7.0"
-  }
+	"name": "immutability-helper-helper",
+	"version": "0.1.0",
+	"main": "index.js",
+	"license": "MIT",
+	"devDependencies": {
+		"mocha": "^5.2.0"
+	},
+	"dependencies": {
+		"immutability-helper": "^2.7.0"
+	},
+	"scripts": {
+		"test": "mocha"
+	}
 }
