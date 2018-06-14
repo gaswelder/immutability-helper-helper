@@ -33,7 +33,7 @@ const op = (val, path = "") => ({
 	unset: (...fields) => update(val, unset(path, fields)),
 	remove: (...keys) => update(val, remove(path, keys)),
 	add: (...items) => update(val, add(path, items)),
-	begin: () => new transaction(val)
+	begin: () => new transaction(val, path)
 });
 
 function softMerge(obj, diff) {
@@ -46,38 +46,30 @@ function softMerge(obj, diff) {
 	}
 }
 
-function transaction(original) {
+function transaction(original, basePath) {
 	const ops = {};
 
-	this.set = (path, val) => {
-		softMerge(ops, set(path, val));
+	const fullPath = subPath =>
+		basePath === "" ? subPath : basePath + "." + subPath;
+
+	const addOps = (subPath, opmaker, oparg) => {
+		const moreOps = opmaker(fullPath(subPath), oparg);
+		softMerge(ops, moreOps);
 		return this;
 	};
 
-	this.push = (path, ...vals) => {
-		softMerge(ops, push(path, vals));
-		return this;
-	};
-
-	this.unshift = (path, ...vals) => {
-		softMerge(ops, unshift(path, vals));
-		return this;
-	};
+	this.set = (path, val) => addOps(path, set, val);
+	this.push = (path, ...vals) => addOps(path, push, vals);
+	this.unshift = (path, ...vals) => addOps(path, unshift, vals);
 
 	this.splice = (path, skip, num, ...vals) => {
-		softMerge(ops, splice(path, skip, num, ...vals));
+		const moreOps = splice(fullPath(path), skip, num, ...vals);
+		softMerge(ops, moreOps);
 		return this;
 	};
 
-	this.merge = (path, diff) => {
-		softMerge(ops, merge(path, diff));
-		return this;
-	};
-
-	this.apply = (path, func) => {
-		softMerge(ops, apply(path, func));
-		return this;
-	};
+	this.merge = (path, diff) => addOps(path, merge, diff);
+	this.apply = (path, func) => addOps(path, apply, func);
 
 	this.end = () => {
 		return update(original, ops);

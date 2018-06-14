@@ -84,3 +84,45 @@ const newData = update(myData, {
 // After:
 const newData = op(op(myData).set("x.y.z", 7)).push("a.b", 9);
 ```
+
+A special syntax for batched operations
+
+```js
+const original = {
+	a: "b",
+	c: {
+		d: "e",
+		f: [1],
+		g: [2],
+		h: [3],
+		i: { j: "k" },
+		l: 4,
+		m: "n"
+	}
+};
+
+// Before:
+const altered = update(original, {
+	c: {
+		d: { $set: "m" },
+		f: { $push: [5] },
+		g: { $unshift: [6] },
+		h: { $splice: [[0, 1, 7]] },
+		i: { $merge: { n: "o" } },
+		l: { $apply: x => x * 2 },
+		m: x => x + x
+	}
+});
+
+// After:
+const altered = op(original, "c")
+	.begin()
+	.set("d", "m")
+	.push("f", 5)
+	.unshift("g", 6)
+	.splice("h", 0, 1, 7)
+	.merge("i", { n: "o" })
+	.apply("l", x => x * 2)
+	.apply("m", x => x + x)
+	.end();
+```

@@ -145,15 +145,15 @@ it("multiple updates", function() {
 		}
 	};
 
-	const mod = op(original)
+	const mod = op(original, "c")
 		.begin()
-		.set("c.d", "m")
-		.push("c.f", 5)
-		.unshift("c.g", 6)
-		.splice("c.h", 0, 1, 7)
-		.merge("c.i", { n: "o" })
-		.apply("c.l", x => x * 2)
-		.apply("c.m", x => x + x)
+		.set("d", "m")
+		.push("f", 5)
+		.unshift("g", 6)
+		.splice("h", 0, 1, 7)
+		.merge("i", { n: "o" })
+		.apply("l", x => x * 2)
+		.apply("m", x => x + x)
 		.end();
 
 	const result = {
