@@ -7,22 +7,25 @@ const wrap = (obj, steps) => {
 	return wrap({ [steps[0]]: obj }, steps.slice(1));
 };
 
-const set = (path, val) => wrap({ $set: val }, steps(path));
-const push = (path, val) => wrap({ $push: [val] }, steps(path));
-const unshift = (path, val) => wrap({ $unshift: [val] }, steps(path));
+const _make = opcode => (path, opargs) =>
+	wrap({ [opcode]: opargs }, steps(path));
+
+const set = _make("$set");
+const push = _make("$push");
+const unshift = _make("$unshift");
 const splice = (path, skip, num, ...vals) =>
 	wrap({ $splice: [[skip, num, ...vals]] }, steps(path));
-const apply = (path, func) => wrap({ $apply: func }, steps(path));
-const merge = (path, diff) => wrap({ $merge: diff }, steps(path));
-const toggle = (path, fields) => wrap({ $toggle: fields }, steps(path));
-const unset = (path, fields) => wrap({ $unset: fields }, steps(path));
-const remove = (path, keys) => wrap({ $remove: keys }, steps(path));
-const add = (path, items) => wrap({ $add: items }, steps(path));
+const apply = _make("$apply");
+const merge = _make("$merge");
+const toggle = _make("$toggle");
+const unset = _make("$unset");
+const remove = _make("$remove");
+const add = _make("$add");
 
 const op = (val, path = "") => ({
 	set: newVal => update(val, set(path, newVal)),
-	push: newVal => update(val, push(path, newVal)),
-	unshift: newVal => update(val, unshift(path, newVal)),
+	push: (...items) => update(val, push(path, items)),
+	unshift: (...items) => update(val, unshift(path, items)),
 	splice: (skip, num, ...vals) => update(val, splice(path, skip, num, ...vals)),
 	apply: func => update(val, apply(path, func)),
 	merge: diff => update(val, merge(path, diff)),
