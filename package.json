@@ -1,15 +1,18 @@
 {
-	"name": "immutability-helper-helper",
-	"version": "0.1.0",
-	"main": "index.js",
-	"license": "MIT",
-	"devDependencies": {
-		"mocha": "^5.2.0"
-	},
-	"dependencies": {
-		"immutability-helper": "^2.7.0"
-	},
-	"scripts": {
-		"test": "mocha"
-	}
+  "name": "immutability-helper-helper",
+  "version": "0.1.0",
+  "description": "Friendlier wrapper around immutability-helper",
+  "main": "index.js",
+  "repository": "git@github.com:gaswelder/immutability-helper-helper.git",
+  "author": "<gasweld@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "immutability-helper": "^2.7.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
 }
