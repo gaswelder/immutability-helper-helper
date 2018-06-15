@@ -1,6 +1,6 @@
 {
   "name": "immutability-helper-helper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Friendlier wrapper around immutability-helper",
   "main": "index.js",
   "repository": "git@github.com:gaswelder/immutability-helper-helper.git",
